@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+	
+	<h3>Test Payment Page</h3>
+	<hr>
+	
+	<p>
+	Logged in as {{ user.username }} <br>
+	</p>
+	
+	<form action="{% url 'testpay_action' %}" method="post" id="payment-form">
+		{% csrf_token %}
+		<label for="cents">Amount in Cents :</label>
+		<input id="cents" name="cents" type="text"><br>
+		<button>Submit</button>
+	</form>
+	
+	
+</body>
+
+</html>

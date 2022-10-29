@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+    <head>
+        <title>Login</title>
+        {% include "header.html" %}
+    </head>
+    <body>
+        <div class="flexcontent">
+            <div class="row">
+                <div class="col-sm-4 offset-sm-4 my-4">
+                    <h1>Login</h1>
+                    <form name="payment-form" id="payment-form" action="{% url 'login_action' %}" method="POST" class="w3-light-grey p-3 w3-border w3-card">
+                        {% csrf_token %}
+                        <label class="my-2">Username</label>
+                        <input required class="w3-input w3-border" type="text" name="username" id="username" size="20"/>
+                        <label class="my-2">Password</label>
+                        <input required class="w3-input w3-border" type="password" name="password" id="password" size="20"/>
+                        <br>
+                        <br>
+                        <input class="w3-button w3-border w3-hover-white" type="submit" value="Submit"/>
+                        <input class="w3-button w3-border w3-hover-white" type="reset" value="Reset" />
+                    </form>
+                    <a href="/accounts/register_page" class="w3-text-grey">Don't have an account? Register</a>
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>

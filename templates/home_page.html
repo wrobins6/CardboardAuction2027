@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+    <head>
+        <title>Auctions</title>
+        {% include "header.html" %}
+    </head>
+    <body>
+        <div class="flexcontent">
+            <div class="row">
+                <div class="col-sm-4 offset-sm-4 my-4">
+                    <h1>Auctions</h1>
+                    <h4>Ongoing Auctions</h4>
+                    {% for alter in activeAuctions %}
+                        <a href="/auction/alter_page?aid={{alter.pk}}" class="w3-text-grey">{{ alter.name }}</a>
+                        <p>{{ alter.deadLine }}</p>
+                        <br>
+                    {% endfor %}
+
+                    <h4>Finished Auctions</h4>
+                    {% for alter in inactiveAuctions %}
+                        <a href="/auction/alter_page?aid={{alter.pk}}" class="w3-text-grey">{{ alter.name }}</a>
+                        <p>{{ alter.deadLine }}</p>
+                        <br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>

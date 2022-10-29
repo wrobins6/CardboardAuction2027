@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+    <head>
+        <title>Register</title>
+        {% include "header.html" %}
+    </head>
+    <body>
+        <script src="https://js.stripe.com/v3/"></script>
+        <div class="flexcontent">
+            <div class="row">
+                <div class="col-sm-4 offset-sm-4 my-4">
+                    <h1>Register</h1>
+                    <form name="payment-form" id="payment-form" action="{% url 'register_action' %}" method="POST" class="w3-light-grey p-3 w3-border w3-card">
+                        {% csrf_token %}
+                        <label class="my-2">Username</label>
+                        <input required class="w3-input w3-border" type="text" name="username" id="username" size="20"/>
+                        <label class="my-2">Password</label>
+                        <input required class="w3-input w3-border" type="password" name="password" id="password" size="20"/>
+                        <label class="my-2">First Name</label>
+                        <input required class="w3-input w3-border" type="text" name="first-name" id="first-name" size="20"/>
+                        <label class="my-2">Last Name</label>
+                        <input required class="w3-input w3-border" type="text" name="last-name" id="last-name" size="20"/>
+                        <label class="my-2">Email</label>
+                        <input required class="w3-input w3-border" type="email" name="email" id="email" size="20"/>
+                        <label class="my-2">Card</label>
+                        <div id="card-element"><!-- To be inserted --></div>
+                        <div id="card-errors" role="alert"><!-- To be inserted --></div>
+                        <br>
+                        <br>
+                        <input class="w3-button w3-border w3-hover-white" type="submit" value="Submit"/>
+                        <input class="w3-button w3-border w3-hover-white" type="reset" value="Reset" />
+                    </form>
+                    <a href="/accounts/login_page" class="w3-text-grey">Already have an account? Login</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            var stripe = Stripe("{{ pk }}")
+            var elements = stripe.elements();
+            var card = elements.create('card');
+            card.mount('#card-element');
+            card.addEventListener('charge', function(event) {
+                var diplayError = document.getElementById('card-errors');
+
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                }
+                else {
+                    displayError.textContent = '';
+                }
+            });
+            var form = document.getElementById('payment-form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                stripe.createToken(card).then(function(result) {
+                    if (result.error) {
+                        var errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                    }
+                    else {
+                        stripeTokenHandler(result.token);
+                    }
+                });
+            });
+            function stripeTokenHandler(token) {
+                var form = document.getElementById('payment-form');
+                var hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'stripeToken');
+                hiddenInput.setAttribute('value', token.id);
+                form.appendChild(hiddenInput);
+                form.submit();
+            }
+        </script>
+        {% include "footer.html" %}
+    </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+    <head>
+        <title>Consignment Portal</title>
+        {% include "header.html" %}
+    </head>
+    <body>
+        <div class="flexcontent">
+            <div class="row">
+                <div class="col-sm-4 my-4">
+                    {% if request.user.is_authenticated and request.user.user_type == 1 %}
+                        <h1>Update To Consigner?</h1>
+                        <form action= "{% url 'update_to_consigner' %}" method="POST" class="w3-light-grey p-3 w3-border w3-card" id="update_to_consigner_form">
+                            {% csrf_token %}
+                        <input class="w3-button w3-border w3-hover-white" type="submit" value="Update"/>
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="col-sm-4 my-4">
+                    {% if request.user.is_authenticated and request.user.user_type == 2 or request.user.user_type == 3 %}
+                        <h1>Submit Alter</h1>
+                        <form name="test" action="#" method="POST" class="w3-light-grey p-3 w3-border w3-card">
+                            <label class="my-2">Alter Name</label>
+                            <input required class="w3-input w3-border" type="text" name="firstname" size="20"/>
+                            <label class="my-2">Alter Description</label>
+                            <input required class="w3-input w3-border" type="text" name="lastname" size="20"/>
+                            <label class="my-2">Alter Price</label>
+                            <input required class="w3-input w3-border" type="text" name="username" size="20"/>
+                            <label class="my-2">Card Name</label>
+                            <input required class="w3-input w3-border" type="text" name="password" size="20"/>
+                            <br>
+                            <br>
+                            <input class="w3-button w3-border w3-hover-white" type="submit" value="Submit"/>
+                            <input class="w3-button w3-border w3-hover-white" type="reset" value="Reset" />
+                        </form>
+                    {% endif %}
+                </div>
+                <div class="col-sm-4 my-4">
+                    {% if request.user.is_authenticated and request.user.user_type == 3 %}
+                        <h1>Works To Approve:</h1>
+                        <a>Something should go here</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>
