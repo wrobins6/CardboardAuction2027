@@ -4,6 +4,7 @@ from secret import secret
 from .models import Alter
 from .models import Bid
 import datetime
+from . import tasks
 
 stripe.api_key = secret.getStripePrivateKey()
 
@@ -38,7 +39,7 @@ def alter_page(request):
         "alter" : Alter.objects.get(pk = request.GET['aid']),
         "bids" : Bid.objects.filter(alter = request.GET['aid'])
     }
-
+    tasks.testscream.apply_async((5,),countdown=5)
     return render(request, "alter_page.html", values)
 
 def bid_action(request):

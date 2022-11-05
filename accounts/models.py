@@ -9,4 +9,4 @@ class CustomUser(AbstractUser):
     (2,  "consigner"),
     (3, "curator")
     )
-    user_type = models.PositiveSmallIntegerField(choices = USER_TYPE_CHOICES)
+    user_type = models.PositiveSmallIntegerField(choices = USER_TYPE_CHOICES, default = 1)

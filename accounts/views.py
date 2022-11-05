@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from .models import CustomUser
 from django.contrib.auth import logout, login, authenticate
 from secret import secret
+from auction.models import Alter
+from . import tasks
 import stripe
+import datetime
 
 stripe.api_key = secret.getStripePrivateKey()
 
@@ -92,4 +95,24 @@ def consignment_portal(request):
         return redirect("login_page")
     else:
         return render(request, "consignment_portal.html")
+        
+def consignment_action(request):
+	if (not request.user.is_authenticated):
+		return redirect("login_page")
+	if (not request.method == "POST"):
+		return redirect("consignment_portal")
+	altername = request.POST["altername"]
+	alterdesc = request.POST["alterdesc"]
+	alterdeadline = request.POST["alterdeadline"]
+	converteddeadline = datetime.datetime.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
+	
+	totaltime = (converteddeadline - datetime.datetime.now()).total_seconds()
+	print(totaltime)
+	
+	newalter = Alter(name=altername, deadLine=alterdeadline)
+	newalter.save()
+	tasks.decidevictor.apply_async( (newalter.id,), countdown=totaltime )
+	
+	return redirect('home_page')
+	    
 
