@@ -8,11 +8,15 @@ from . import tasks
 
 stripe.api_key = secret.getStripePrivateKey()
 
-# Create your views here.
+
+
+# ----------------------
+# -- DEBUG VIEWS -------
+# ----------------------
 
 def testpay_page(request):
     return render(request, "testpay_page.html")
-    
+       
 def testpay_action(request):
     if (request.method == 'POST'):
         if (not request.user.is_authenticated):
@@ -27,6 +31,13 @@ def testpay_action(request):
             )
     return redirect("testpay_page")
 
+
+
+
+# ----------------------
+# -- GENERAL VIEWS -----
+# ----------------------
+
 def home_page(request):
     values = {
         "activeAuctions" : Alter.objects.filter(deadLine__gt = datetime.datetime.now()),
@@ -39,7 +50,6 @@ def alter_page(request):
         "alter" : Alter.objects.get(pk = request.GET['aid']),
         "bids" : Bid.objects.filter(alter = request.GET['aid'])
     }
-    tasks.testscream.apply_async((5,),countdown=5)
     return render(request, "alter_page.html", values)
 
 def bid_action(request):
@@ -58,3 +68,48 @@ def search_action(request):
         "alters" : Alter.objects.filter(name__contains = request.POST['search'])
     }
     return render(request, "search_page.html", values)
+    
+
+
+
+# ----------------------
+# - CONSIGNMENT VIEWS --
+# ----------------------
+  
+def update_to_consigner(request):
+    if (not request.user.is_authenticated):
+        return redirect("login_page")
+    else:
+        print("Update the user to consigner group")
+        request.user.user_type = 2
+        request.user.save()
+        return redirect("consignment_portal")
+
+def consignment_page(request):
+    return render(request, "consignment_page.html")
+
+def consignment_portal(request):
+    if (not request.user.is_authenticated):
+        return redirect("login_page")
+    else:
+        return render(request, "consignment_portal.html")
+        
+def consignment_action(request):
+	if (not request.user.is_authenticated):
+		return redirect("login_page")
+	if (not request.method == "POST"):
+		return redirect("consignment_portal")
+	altername = request.POST["altername"]
+	alterdesc = request.POST["alterdesc"]
+	alterdeadline = request.POST["alterdeadline"]
+	converteddeadline = datetime.datetime.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
+	
+	totaltime = (converteddeadline - datetime.datetime.now()).total_seconds()
+	print(totaltime)
+	
+	newalter = Alter(name=altername, deadLine=alterdeadline)
+	newalter.save()
+	tasks.decidevictor.apply_async( (newalter.id,), countdown=totaltime )
+	
+	return redirect('home_page')
+

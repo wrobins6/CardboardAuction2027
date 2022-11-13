@@ -3,7 +3,6 @@ from .models import CustomUser
 from django.contrib.auth import logout, login, authenticate
 from secret import secret
 from auction.models import Alter
-from . import tasks
 import stripe
 import datetime
 
@@ -77,42 +76,5 @@ def login_failure(request):
 def logout_action(request):
     logout(request)
     return redirect("home_page")
-
-def update_to_consigner(request):
-    if (not request.user.is_authenticated):
-        return redirect("login_page")
-    else:
-        print("Update the user to consigner group")
-        request.user.user_type = 2
-        request.user.save()
-        return redirect("consignment_portal")
-
-def consignment_page(request):
-    return render(request, "consignment_page.html")
-
-def consignment_portal(request):
-    if (not request.user.is_authenticated):
-        return redirect("login_page")
-    else:
-        return render(request, "consignment_portal.html")
-        
-def consignment_action(request):
-	if (not request.user.is_authenticated):
-		return redirect("login_page")
-	if (not request.method == "POST"):
-		return redirect("consignment_portal")
-	altername = request.POST["altername"]
-	alterdesc = request.POST["alterdesc"]
-	alterdeadline = request.POST["alterdeadline"]
-	converteddeadline = datetime.datetime.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
-	
-	totaltime = (converteddeadline - datetime.datetime.now()).total_seconds()
-	print(totaltime)
-	
-	newalter = Alter(name=altername, deadLine=alterdeadline)
-	newalter.save()
-	tasks.decidevictor.apply_async( (newalter.id,), countdown=totaltime )
-	
-	return redirect('home_page')
 	    
 
