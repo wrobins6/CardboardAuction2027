@@ -10,6 +10,7 @@ urlpatterns = [
     path('alter_page', views.alter_page, name='alter_page'),
     path('bid_action', views.bid_action, name='bid_action'),
     path('search_action', views.search_action, name='search_action'),
+    path('error_page', views.error_page, name='error_page'),
     # -- consignment --
     path('consignment_page', views.consignment_page, name='consignment_page'),
     path('consignment_portal', views.consignment_portal, name='consignment_portal'),

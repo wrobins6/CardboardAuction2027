@@ -18,14 +18,15 @@ Alter Page
         <br>
     {% endfor %}
 
-
-    <form action="{% url 'bid_action' %}" method="post" id="bid-form">
-    {% csrf_token %}
-    <label for="cents">Bid amount:</label>
-    <input id="cents" name="cents" type="text"><br>
-    <input id="alter" name="alter" type="hidden" value="{{ alter.pk }}"><br>
-    <button>Submit</button>
-    </form>
+    {% if not expired %}
+        <form action="{% url 'bid_action' %}" method="post" id="bid-form">
+        {% csrf_token %}
+        <label for="cents">Bid amount:</label>
+        <input id="cents" name="cents" type="text"><br>
+        <input id="alter" name="alter" type="hidden" value="{{ alter.pk }}"><br>
+        <button>Submit</button>
+        </form>
+    {% endif %}
 </body>
 
 </html>

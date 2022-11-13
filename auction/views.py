@@ -38,6 +38,12 @@ def testpay_action(request):
 # -- GENERAL VIEWS -----
 # ----------------------
 
+def error_page(request, error):
+    values = {
+        "error" : error
+    }
+    return render(request, "error_page.html", values)
+
 def home_page(request):
     values = {
         "activeAuctions" : Alter.objects.filter(deadLine__gt = datetime.datetime.now()),
@@ -46,21 +52,50 @@ def home_page(request):
     return render(request, "home_page.html", values)
 
 def alter_page(request):
+    alter = Alter.objects.get(pk = request.GET['aid'])
+    bids = Bid.objects.filter(alter = request.GET['aid'])
+
+    expired = alter.deadLine <= datetime.datetime.now()
+
     values = {
-        "alter" : Alter.objects.get(pk = request.GET['aid']),
-        "bids" : Bid.objects.filter(alter = request.GET['aid'])
+        "alter" : alter,
+        "bids" : bids,
+        "expired" : expired
     }
+
     return render(request, "alter_page.html", values)
 
 def bid_action(request):
     if (request.method == 'POST'):
         if (not request.user.is_authenticated):
             return redirect("login_page")
-        cents = request.POST['cents']
-        alter = request.POST['alter']
-        #customer = stripe.Customer.retrieve(request.user.customer_id)
-        #charge = stripe.Charge.create(customer = customer, amount = cents, currency = 'usd', description = "Test Bid charge")
-        new_bid = Bid.objects.create(amount = cents, alter_id = alter, user_id = request.user.pk)
+        try:
+            cents = request.POST['cents']
+            alterID = request.POST['alter']
+        except:
+            return error_page(request, "Bid missing key values!")
+
+        numCents = int(cents)
+
+        if numCents <= 0:
+            return error_page(request, "Bid is less than or equal to zero!")
+
+        try:
+            alter = Alter.objects.get(id=alterID)
+        except:
+            return error_page(request, "Error getting Alter!")
+
+        if alter.deadLine <= datetime.datetime.now():
+            return error_page(request, "Auction has already ended")
+
+
+        bids = Bid.objects.filter(alter = alter)
+        currentHighest = bids.order_by('-amount').first()
+
+        if numCents <= currentHighest:
+            return error_page(request, "Input bid amount is less than or equal to the current highest bid")
+
+        new_bid = Bid.objects.create(amount = cents, alter_id = alterID, user_id = request.user.pk)
     return redirect("home_page")
 
 def search_action(request):
@@ -69,9 +104,6 @@ def search_action(request):
     }
     return render(request, "search_page.html", values)
     
-
-
-
 # ----------------------
 # - CONSIGNMENT VIEWS --
 # ----------------------
