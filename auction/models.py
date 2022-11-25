@@ -5,9 +5,17 @@ from accounts.models import CustomUser
 
 class Alter(models.Model):
     name = models.CharField(max_length=64)
+    consigner = models.ForeignKey(CustomUser, on_delete = models.CASCADE, null=True)
+    underManagement = models.BooleanField(default=False)
+
+class Auction(models.Model):
+    alter = models.OneToOneField(Alter, on_delete = models.CASCADE, null=True)
+    startAmount = models.IntegerField()
+    minimumIncrement = models.IntegerField()
+    launchTime = models.DateTimeField()
     deadLine = models.DateTimeField()
 
 class Bid(models.Model):
     amount = models.IntegerField()
-    alter = models.ForeignKey(Alter, on_delete = models.CASCADE)
+    auction = models.ForeignKey(Alter, on_delete = models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)

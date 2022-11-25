@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+	
+	<h3>Test Shipment Page</h3>
+	<hr>
+	
+	<p>
+	Logged in as {{ user.username }} <br>
+	</p>
+	
+	<form action="{% url 'testship_action' %}" method="post" id="payment-form">
+		{% csrf_token %}
+		<button>Submit</button>
+	</form>
+	
+	
+</body>
+
+</html>

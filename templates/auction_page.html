@@ -2,16 +2,16 @@
 <html>
 
 <head>
-Alter Page
+Auction Page
 </head>
 
 <body>
 
-    <h3>Alter</h3>
+    <h3>Auction</h3>
     <hr>
     <h4>Info</h4>
-    <p> {{ alter.name }} </p>
-    <p> {{ alter.deadLine }}</p>
+    <p> {{ auction.alter.name }} </p>
+    <p> {{ auction.deadLine }}</p>
     <br>
     {% for bid in bids %}
         <p> {{ bid.user }} bid: {{ bid.amount }}</p>
@@ -23,7 +23,7 @@ Alter Page
         {% csrf_token %}
         <label for="cents">Bid amount:</label>
         <input id="cents" name="cents" type="text"><br>
-        <input id="alter" name="alter" type="hidden" value="{{ alter.pk }}"><br>
+        <input id="auction" name="auction" type="hidden" value="{{ auction.pk }}"><br>
         <button>Submit</button>
         </form>
     {% endif %}

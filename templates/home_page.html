@@ -10,16 +10,16 @@
                 <div class="col-sm-4 offset-sm-4 my-4">
                     <h1>Auctions</h1>
                     <h4>Ongoing Auctions</h4>
-                    {% for alter in activeAuctions %}
-                        <a href="/auction/alter_page?aid={{alter.pk}}" class="w3-text-grey">{{ alter.name }}</a>
-                        <p>{{ alter.deadLine }}</p>
+                    {% for auction in activeAuctions %}
+                        <a href="/auction/auction_page?aid={{auction.pk}}" class="w3-text-grey">{{ auction.alter.name }}</a>
+                        <p>{{ auction.deadLine }}</p>
                         <br>
                     {% endfor %}
 
                     <h4>Finished Auctions</h4>
                     {% for alter in inactiveAuctions %}
-                        <a href="/auction/alter_page?aid={{alter.pk}}" class="w3-text-grey">{{ alter.name }}</a>
-                        <p>{{ alter.deadLine }}</p>
+                        <a href="/auction/auction_page?aid={{auction.pk}}" class="w3-text-grey">{{ auction.alter.name }}</a>
+                        <p>{{ auction.deadLine }}</p>
                         <br>
                     {% endfor %}
                 </div>

@@ -9,9 +9,9 @@
             <div class="row">
                 <div class="col-sm-4 offset-sm-4 my-4">
                     <h1>Search Results</h1>
-                    {% for alter in alters %}
-                        <a href="/auction/alter_page?aid={{alter.pk}}" class="w3-text-grey">{{ alter.name }}</a>
-                        <p>{{ alter.deadLine }}</p>
+                    {% for auction in auctions %}
+                        <a href="/auction/auction_page?aid={{alter.pk}}" class="w3-text-grey">{{ auction.alter.name }}</a>
+                        <p>{{ auction.deadLine }}</p>
                         <br>
                     {% endfor %}
                 </div>

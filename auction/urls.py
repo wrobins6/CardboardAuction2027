@@ -5,9 +5,11 @@ urlpatterns = [
     # -- debug only --	
     path('testpay_page', views.testpay_page, name='testpay_page'),
     path('testpay_action', views.testpay_action, name='testpay_action'),
+    path('testship_page', views.testship_page, name='testship_page'),
+    path('testship_action', views.testship_action, name='testship_action'),
     # -- general --
     path('home_page', views.home_page, name='home_page'),
-    path('alter_page', views.alter_page, name='alter_page'),
+    path('auction_page', views.auction_page, name='auction_page'),
     path('bid_action', views.bid_action, name='bid_action'),
     path('search_action', views.search_action, name='search_action'),
     path('error_page', views.error_page, name='error_page'),
