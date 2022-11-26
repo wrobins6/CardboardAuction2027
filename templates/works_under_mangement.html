@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+    <head>
+        <title>Works Under Management</title>
+        {% include "header.html" %}
+    </head>
+    <body>
+        <div class="flexcontent">
+            <div class="row">
+                <div class="col-sm-4 offset-sm-4 my-4">
+                    <h1>Works Under Management</h1>
+                    {% for alter in results %}
+                        <p>{{ alter.name }}</p>
+                        <br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>

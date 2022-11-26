@@ -183,7 +183,7 @@ def consignment_action(request):
 	# converteddeadline = datetime.datetime.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
 	# totaltime = (converteddeadline - datetime.datetime.now()).total_seconds()
 	# print(totaltime)
-	newalter = Alter(name=altername)
+	newalter = Alter(name=altername, consigner=request.user)
 	newalter.save()
 	# tasks.decidevictor.apply_async( (newalter.id,), countdown=totaltime )
 	return redirect('home_page')
@@ -199,22 +199,23 @@ def ensure_curator(request):
 def pending_alters(request):
     if (not ensure_curator(request)): return redirect('home page')
     dict = {
-        "results" : Auction.objects.filter(underManagement = False)
+        "results" : Alter.objects.filter(underManagement = False)
     }
     return render(request, "pending_alters.html", dict)
 
 def works_under_management(request):
     if (not ensure_curator(request)): return redirect('home page')
     dict = {
-        "results" : Auction.objects.filter(underManagement = True)
+        "results" : Alter.objects.filter(underManagement = True)
     }
-    return render(request, "works_under_mangement.html")
+    return render(request, "works_under_mangement.html", dict)
 
 def accept_pending_alter(request):
     if (not ensure_curator(request)): return redirect('home page')
     if (request.method != 'POST'): return redirect('home_page')
     alter = Alter.objects.get(pk = request.POST['aid'])
     alter.underManagement = True
+    alter.save()
     return redirect('pending_alters')
 
 def setup_auction_page(request):

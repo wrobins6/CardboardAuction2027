@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+    <head>
+        <title>Alters Pending Approval</title>
+        {% include "header.html" %}
+    </head>
+    <body>
+        <div class="flexcontent">
+            <div class="row">
+                <div class="col-sm-4 offset-sm-4 my-4">
+                    <h1>Alters Pending Approval</h1>
+                    {% for alter in results %}
+                        <p>{{ alter.name }}</p>
+                        <form name="accept-form" action="{% url 'accept_pending_alter' %}" method="POST">
+                            {% csrf_token %}
+                            <input name="aid" type="hidden" value="{{ alter.pk }}"><br>
+                            <input class="w3-button w3-border w3-hover-white" type="submit" value="Accept"/>
+                        </form>
+                        <br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>

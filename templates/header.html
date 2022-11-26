@@ -20,6 +20,10 @@
             <a href="#" class="p-4 nav-item w3-button w3-border-right w3-hover-white nav-link">Contact</a>
             <a href="#" class="p-4 nav-item w3-button w3-border-right w3-hover-white nav-link">Articles</a>
             {% if request.user.is_authenticated %}
+                {% if request.user.user_type >= 3 %}
+                    <a href="{% url 'pending_alters' %}" class="p-4 nav-item w3-button w3-border-right w3-hover-white nav-link">Alters Pending Approval</a>
+                    <a href="{% url 'works_under_management' %}" class="p-4 nav-item w3-button w3-border-right w3-hover-white nav-link">Works Under Management</a>
+                {% endif %}
                 <a href="#" class="p-4 nav-item w3-button w3-border-right w3-hover-white nav-link"><b>{{ request.user.username }}</b></a>
                 <a href="{% url 'logout_action' %}" class="p-4 nav-item w3-button w3-border-right w3-hover-white nav-link">Logout</a>
             {% else %}
