@@ -14,6 +14,8 @@ class Auction(models.Model):
     minimumIncrement = models.IntegerField()
     launchTime = models.DateTimeField()
     deadLine = models.DateTimeField()
+    started = models.BooleanField(default=False)
+    ended = models.BooleanField(default=False)
 
 class Bid(models.Model):
     amount = models.IntegerField()

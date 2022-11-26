@@ -18,4 +18,10 @@ urlpatterns = [
     path('consignment_portal', views.consignment_portal, name='consignment_portal'),
     path('update_to_consigner', views.update_to_consigner, name='update_to_consigner'),
     path('consignment_action', views.consignment_action, name='consignment_action'),
+    # -- curation --
+    path('pending_alters', views.pending_alters, name='pending_alters'),
+    path('works_under_management', views.works_under_management, name='works_under_management'),
+    path('accept_pending_alter', views.accept_pending_alter, name='accept_pending_alter'),
+    path('setup_auction_page', views.setup_auction_page, name='setup_auction_page'),
+    path('setup_auction_action', views.setup_auction_action, name='setup_auction_action')
 ]

@@ -189,17 +189,60 @@ def consignment_action(request):
 	return redirect('home_page')
 
 # ----------------------
-# -- CURATION VIEWS  ---
+# --- CURATION VIEWS ---
 # ----------------------
 
+def ensure_curator(request):
+    if (not request.user.is_authenticated): return False
+    return request.user.user_type == 2 or request.user.user_type == 3
+
 def pending_alters(request):
-    return redirect('home_page')
+    if (not ensure_curator(request)): return redirect('home page')
+    dict = {
+        "results" : Auction.objects.filter(underManagement = False)
+    }
+    return render(request, "pending_alters.html", dict)
 
 def works_under_management(request):
-    return redirect('home_page')
+    if (not ensure_curator(request)): return redirect('home page')
+    dict = {
+        "results" : Auction.objects.filter(underManagement = True)
+    }
+    return render(request, "works_under_mangement.html")
 
 def accept_pending_alter(request):
-    return redirect('home_page')
+    if (not ensure_curator(request)): return redirect('home page')
+    if (request.method != 'POST'): return redirect('home_page')
+    alter = Alter.objects.get(pk = request.POST['aid'])
+    alter.underManagement = True
+    return redirect('pending_alters')
 
-def alter_detail_page(request):
-    return redirect('home_page')
+def setup_auction_page(request):
+    if (not ensure_curator(request)): return redirect('home page')
+    alter = Alter.objects.get(pk = request.POST['aid'])
+    dict = {
+        "alter" : alter
+    }
+    return render(request, "setup_auction_page.html", dict)
+
+def setup_auction_action(request):
+    if (not ensure_curator(request)): return redirect('home page')
+    if (request.method != 'POST'): return redirect('home_page')
+    try:
+        alterID = request.POST['aid']
+        launchTime = request.POST['launchTime']
+        deadLine = request.POST['deadLine']
+        startAmount = request.POST['startAmount']
+        minimumIncrement = request.POST['minimumIncrement']
+    except:
+        return error_page(request, "Setup missing key values!")
+    alter = Alter.objects.get(pk = alterID)
+    newAuction = Auction(
+        alter=alter,
+        startAmount=startAmount,
+        minimumIncrement=minimumIncrement,
+        launchTime=launchTime,
+        deadLine=deadLine
+        )
+    newAuction.save()
+    return redirect("setup_auction_page")
