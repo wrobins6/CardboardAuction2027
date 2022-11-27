@@ -205,8 +205,15 @@ def pending_alters(request):
 
 def works_under_management(request):
     if (not ensure_curator(request)): return redirect('home page')
+    alters = Alter.objects.filter(underManagement = True)
+    results = []
+    for alter in alters:
+        if (hasattr(alter, 'auction') and alter.auction is not None):
+            pass
+        else:
+            results.append(alter)
     dict = {
-        "results" : Alter.objects.filter(underManagement = True)
+        "results" : results
     }
     return render(request, "works_under_mangement.html", dict)
 
@@ -220,7 +227,9 @@ def accept_pending_alter(request):
 
 def setup_auction_page(request):
     if (not ensure_curator(request)): return redirect('home page')
-    alter = Alter.objects.get(pk = request.POST['aid'])
+    alter = Alter.objects.get(pk = request.GET['aid'])
+    if (hasattr(alter, 'auction') and alter.auction is not None):
+        return error_page(request, "An Auction already exists for this alter!")
     dict = {
         "alter" : alter
     }
@@ -246,4 +255,4 @@ def setup_auction_action(request):
         deadLine=deadLine
         )
     newAuction.save()
-    return redirect("setup_auction_page")
+    return redirect('home_page')
