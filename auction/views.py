@@ -100,7 +100,7 @@ def auction_page(request):
     auction = Auction.objects.get(pk = request.GET['aid'])
     bids = Bid.objects.filter(auction = request.GET['aid'])
 
-    expired = Auction.deadLine <= datetime.datetime.now()
+    expired = auction.deadLine <= datetime.datetime.now()
 
     values = {
         "auction" : auction,
@@ -120,7 +120,7 @@ def bid_action(request):
             auctionID = request.POST['auction']
         except:
             return error_page(request, "Bid missing key values!")
-            
+
         numCents = int(cents)
 
         if numCents <= 0:
@@ -134,11 +134,14 @@ def bid_action(request):
         if auction.deadLine <= datetime.datetime.now():
             return error_page(request, "Auction has already ended")
 
+        if numCents < auction.startAmount:
+            return error_page(request, "Input bid amount is less than or equal to the starting price.")
+
         bids = Bid.objects.filter(auction = auction)
         currentHighest = bids.order_by('-amount').first()
 
-        if numCents <= currentHighest:
-            return error_page(request, "Input bid amount is less than or equal to the current highest bid")
+        if numCents < currentHighest + auction.minimumIncrement:
+            return error_page(request, "Input bid amount is less than or equal to the current highest bid plus the minimum increment.")
 
         new_bid = Bid.objects.create(amount = cents, alter_id = auctionID, user_id = request.user.pk)
     return redirect("home_page")
