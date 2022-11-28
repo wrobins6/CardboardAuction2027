@@ -19,5 +19,5 @@ class Auction(models.Model):
 
 class Bid(models.Model):
     amount = models.IntegerField()
-    auction = models.ForeignKey(Alter, on_delete = models.CASCADE)
+    auction = models.ForeignKey(Auction, on_delete = models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)

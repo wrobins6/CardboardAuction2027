@@ -10,7 +10,7 @@
                 <div class="col-sm-4 offset-sm-4 my-4">
                     <h1>Alters Pending Approval</h1>
                     {% for alter in results %}
-                        <p>{{ alter.name }} consigned by {{ alter.consigner.name }}</p>
+                        <p>{{ alter.name }} consigned by {{ alter.consigner.username }}</p>
                         <form name="accept-form" action="{% url 'accept_pending_alter' %}" method="POST">
                             {% csrf_token %}
                             <input name="aid" type="hidden" value="{{ alter.pk }}"><br>

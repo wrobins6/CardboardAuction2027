@@ -39,18 +39,19 @@ def testship_page(request):
 def testship_action(request):
     address_from = {
         "name": "Shawn Ippotle",
-        "street1": "215 Clayton St.",
-        "city": "San Francisco",
-        "state": "CA",
-        "zip": "94117",
+        "street1": "18 Glenview Ave",
+        "city": "Southbridge",
+        "state": "MA",
+        "zip": "01550",
         "country": "US"
     }
     address_to = {
         "name": "Mr Hippo",
-        "street1": "8098",
-        "city": "Glen Cove",
-        "state": "NJ",
-        "zip": "11542",
+        "street1": "118 Pomfret Street",
+        "street2": "Apartment 2W",
+        "city": "Putnam",
+        "state": "CT",
+        "zip": "06260",
         "country": "US"
     }
     parcel = {
@@ -127,7 +128,7 @@ def bid_action(request):
             return error_page(request, "Bid is less than or equal to zero!")
 
         try:
-            auction = auction.objects.get(id=auctionID)
+            auction = Auction.objects.get(pk=auctionID)
         except:
             return error_page(request, "Error getting Auction!")
 
@@ -140,10 +141,11 @@ def bid_action(request):
         bids = Bid.objects.filter(auction = auction)
         currentHighest = bids.order_by('-amount').first()
 
-        if numCents < currentHighest + auction.minimumIncrement:
-            return error_page(request, "Input bid amount is less than or equal to the current highest bid plus the minimum increment.")
+        if currentHighest is not None:
+            if numCents < currentHighest.amount + auction.minimumIncrement:
+                return error_page(request, "Input bid amount is less than or equal to the current highest bid plus the minimum increment.")
 
-        new_bid = Bid.objects.create(amount = cents, alter_id = auctionID, user_id = request.user.pk)
+        new_bid = Bid.objects.create(amount = cents, auction = auction, user = request.user)
     return redirect("home_page")
 
 def search_action(request):
@@ -186,7 +188,9 @@ def consignment_action(request):
 	# converteddeadline = datetime.datetime.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
 	# totaltime = (converteddeadline - datetime.datetime.now()).total_seconds()
 	# print(totaltime)
+	print(request.user)
 	newalter = Alter(name=altername, consigner=request.user)
+	print(newalter.consigner)
 	newalter.save()
 	# tasks.decidevictor.apply_async( (newalter.id,), countdown=totaltime )
 	return redirect('home_page')

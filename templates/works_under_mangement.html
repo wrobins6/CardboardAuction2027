@@ -10,7 +10,7 @@
                 <div class="col-sm-4 offset-sm-4 my-4">
                     <h1>Works Under Management</h1>
                     {% for alter in results %}
-                        <p>{{ alter.name }} consigned by {{ alter.consigner.name }}
+                        <p>{{ alter.name }} consigned by {{ alter.consigner.username }}
                             <a href="/auction/setup_auction_page?aid={{ alter.pk }}" class="w3-text-grey"> Setup Auction</a>
                         </p>
                         <br>
