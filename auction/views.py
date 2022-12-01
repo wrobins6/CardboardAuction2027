@@ -258,7 +258,7 @@ def setup_auction_page(request):
     return render(request, "setup_auction_page.html", dict)
 
 def setup_auction_action(request):
-    if (not ensure_curator(request)): return redirect('home page')
+    if (not ensure_curator(request)): return redirect('home_page')
     if (request.method != 'POST'): return redirect('home_page')
     try:
         alterID = request.POST['aid']

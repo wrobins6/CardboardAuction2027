@@ -17,7 +17,7 @@
                     {% endfor %}
 
                     <h4>Finished Auctions</h4>
-                    {% for alter in inactiveAuctions %}
+                    {% for auction in inactiveAuctions %}
                         <a href="/auction/auction_page?aid={{auction.pk}}" class="w3-text-grey">{{ auction.alter.name }}</a>
                         <p>{{ auction.deadLine }}</p>
                         <br>
