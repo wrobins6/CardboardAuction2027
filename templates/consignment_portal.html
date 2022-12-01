@@ -19,7 +19,7 @@
                 <div class="col-sm-4 my-4">
                     {% if request.user.is_authenticated and request.user.user_type == 2 or request.user.user_type == 3 %}
                         <h1>Submit Alter</h1>
-                        <form name="test" action="{% url 'consignment_action' %}" method="POST" class="w3-light-grey p-3 w3-border w3-card">
+                        <form name="test" action="{% url 'consignment_action' %}" method="POST" enctype="multipart/form-data" class="w3-light-grey p-3 w3-border w3-card">
                             {% csrf_token %}
                             <label class="my-2">Alter Name</label>
                             <input required class="w3-input w3-border" type="text" name="altername" size="20"/>
@@ -34,6 +34,9 @@
                             <input required class="w3-input w3-border" type="datetime-local" name="alterdeadline" size="20"/>
                             -->
                             <!-- [label ] -->
+
+                            <label class="my-2">Picture</label>
+                            <input required class="w3-input w3-border" type="file" name="alterimage" multiple/>
                             <br>
                             <br>
                             <input class="w3-button w3-border w3-hover-white" type="submit" value="Submit"/>

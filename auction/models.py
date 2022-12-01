@@ -21,3 +21,8 @@ class Bid(models.Model):
     amount = models.IntegerField()
     auction = models.ForeignKey(Auction, on_delete = models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
+
+class Alter_Image(models.Model):
+    picture = models.BinaryField(default=b'\x00', editable=True) # lol
+    alter = models.ForeignKey(Alter, on_delete = models.CASCADE)
+

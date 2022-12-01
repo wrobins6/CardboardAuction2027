@@ -4,9 +4,11 @@ import stripe
 import shippo
 
 from secret import secret
-from .models import Alter, Auction, Bid
+from .models import Alter, Auction, Bid, Alter_Image
 import datetime
 from . import tasks
+import os
+import base64
 
 stripe.api_key = secret.getStripePrivateKey()
 shippo.config.api_key = secret.getShippoSecretKey()
@@ -100,14 +102,21 @@ def home_page(request):
 def auction_page(request):
     auction = Auction.objects.get(pk = request.GET['aid'])
     bids = Bid.objects.filter(auction = request.GET['aid'])
-
     expired = auction.deadLine <= datetime.datetime.now()
+    images = Alter_Image.objects.filter(alter = auction.alter)
+    imageB64 = []
+
+    for image in images:
+        tempPicture = image.picture
+        imageB64.append(base64.standard_b64encode(tempPicture).decode()) #base64 string, call decode() since b64encode returns a bytes object and not a string
+
+    print(len(imageB64))
 
     values = {
         "auction" : auction,
-        "alter" : auction.alter,
         "bids" : bids,
-        "expired" : expired
+        "expired" : expired,
+        "images" : imageB64
     }
 
     return render(request, "auction_page.html", values)
@@ -188,10 +197,16 @@ def consignment_action(request):
 	# converteddeadline = datetime.datetime.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
 	# totaltime = (converteddeadline - datetime.datetime.now()).total_seconds()
 	# print(totaltime)
-	print(request.user)
+	#print(request.user)
+	#print(newalter.consigner)
+
 	newalter = Alter(name=altername, consigner=request.user)
-	print(newalter.consigner)
 	newalter.save()
+
+	for alterImage in request.FILES.getlist("alterimage"):
+		alterImageBytes = alterImage.read()
+		newAlterImage = Alter_Image(picture = alterImageBytes, alter= newalter)
+		newAlterImage.save()
 	# tasks.decidevictor.apply_async( (newalter.id,), countdown=totaltime )
 	return redirect('home_page')
 

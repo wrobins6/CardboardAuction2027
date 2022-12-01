@@ -13,6 +13,10 @@ Auction Page
     <p> {{ auction.alter.name }} </p>
     <p> {{ auction.deadLine }}</p>
     <br>
+    {% for image in images  %}
+        <img src="data:image/png;base64,{{ image }}" width="200" height="200">
+    {% endfor %}
+    <br>
     {% for bid in bids %}
         <p> {{ bid.user }} bid: {{ bid.amount }}</p>
         <br>
