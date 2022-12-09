@@ -4,7 +4,7 @@ from django.contrib.auth import logout, login, authenticate
 from secret import secret
 from auction.models import Alter
 import stripe
-import datetime
+from django.utils import timezone
 
 stripe.api_key = secret.getStripePrivateKey()
 

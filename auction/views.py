@@ -5,7 +5,7 @@ import shippo
 
 from secret import secret
 from .models import Alter, Auction, Bid, Alter_Image
-import datetime
+from django.utils import timezone
 from . import tasks
 import os
 import base64
@@ -94,15 +94,15 @@ def error_page(request, error):
 
 def home_page(request):
     values = {
-        "activeAuctions" : Auction.objects.filter(deadLine__gt = datetime.datetime.now()),
-        "inactiveAuctions" : Auction.objects.filter(deadLine__lte = datetime.datetime.now())
+        "activeAuctions" : Auction.objects.filter(deadLine__gt = timezone.now()),
+        "inactiveAuctions" : Auction.objects.filter(deadLine__lte = timezone.now())
     }
     return render(request, "home_page.html", values)
 
 def auction_page(request):
     auction = Auction.objects.get(pk = request.GET['aid'])
     bids = Bid.objects.filter(auction = request.GET['aid'])
-    expired = auction.deadLine <= datetime.datetime.now()
+    expired = auction.deadLine <= timezone.now()
     images = Alter_Image.objects.filter(alter = auction.alter)
     imageB64 = []
 
@@ -141,7 +141,7 @@ def bid_action(request):
         except:
             return error_page(request, "Error getting Auction!")
 
-        if auction.deadLine <= datetime.datetime.now():
+        if auction.deadLine <= timezone.now():
             return error_page(request, "Auction has already ended")
 
         if numCents < auction.startAmount:
@@ -194,8 +194,8 @@ def consignment_action(request):
 	altername = request.POST["altername"]
 	# alterdesc = request.POST["alterdesc"]
 	# alterdeadline = request.POST["alterdeadline"]
-	# converteddeadline = datetime.datetime.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
-	# totaltime = (converteddeadline - datetime.datetime.now()).total_seconds()
+	# converteddeadline = timezone.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
+	# totaltime = (converteddeadline - timezone.now()).total_seconds()
 	# print(totaltime)
 	#print(request.user)
 	#print(newalter.consigner)
