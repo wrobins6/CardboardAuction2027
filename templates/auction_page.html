@@ -1,36 +1,69 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE HTML>
+<html lang="en-us">
+    <head>
+        <title>Auction</title>
+        {% include "header.html" %}
+    </head>
+    <body>
+        <div class="flexcontent">
+            <div class="row">
+                <div class="col-sm-3 offset-sm-3 my-4">
+                    <h1>{{ auction.alter.name }}</h1>
+                    <p>End date: <b>{{ auction.deadLine }}</b></p>
+                    <div class="p-3 w3-border w3-card">
+                        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for image in images  %}
+                                    {% if forloop.counter0 == 0 %}
+                                        <div class="carousel-item active">
+                                            <div class="d-flex justify-content-center">
+                                                <img src="data:image/png;base64,{{ image }}" width="400" height="400">
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="carousel-item">
+                                            <div class="d-flex justify-content-center">
+                                                <img src="data:image/png;base64,{{ image }}" width="400" height="400">
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 my-4">
+                    {% if bids %}
+                        <h1>Bids</h1>
+                        {% for bid in bids %}
+                            <p><b>{{ bid.user }}</b> bid: {{ bid.amount }}</p>
+                        {% endfor %}
+                    {% endif %}
 
-<head>
-Auction Page
-</head>
-
-<body>
-
-    <h3>Auction</h3>
-    <hr>
-    <h4>Info</h4>
-    <p> {{ auction.alter.name }} </p>
-    <p> {{ auction.deadLine }}</p>
-    <br>
-    {% for image in images  %}
-        <img src="data:image/png;base64,{{ image }}" width="200" height="200">
-    {% endfor %}
-    <br>
-    {% for bid in bids %}
-        <p> {{ bid.user }} bid: {{ bid.amount }}</p>
-        <br>
-    {% endfor %}
-
-    {% if not expired %}
-        <form action="{% url 'bid_action' %}" method="post" id="bid-form">
-        {% csrf_token %}
-        <label for="cents">Bid amount:</label>
-        <input id="cents" name="cents" type="text"><br>
-        <input id="auction" name="auction" type="hidden" value="{{ auction.pk }}"><br>
-        <button>Submit</button>
-        </form>
-    {% endif %}
-</body>
-
+                    {% if not expired %}
+                        <h1>Place Bid</h1>
+                        <form action="{% url 'bid_action' %}" method="post" class="w3-light-grey p-3 w3-border w3-card" id="bid-form">
+                            {% csrf_token %}
+                            <label class="my-2" for="cents">Bid amount:</label>
+                            <input required class="w3-input w3-border" id="cents" name="cents" type="text">
+                            <input required class="w3-input w3-border" id="auction" name="auction" type="hidden" value="{{ auction.pk }}">
+                            <br>
+                            <br>
+                            <input class="w3-button w3-border w3-hover-white" type="submit" value="Submit"/>
+                            <input class="w3-button w3-border w3-hover-white" type="reset" value="Reset" />
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
 </html>
