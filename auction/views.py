@@ -6,6 +6,8 @@ import shippo
 from secret import secret
 from .models import Alter, Auction, Bid, Alter_Image
 from django.utils import timezone
+from django.utils.timezone import make_aware
+from datetime import datetime
 from . import tasks
 import os
 import base64
@@ -95,7 +97,9 @@ def error_page(request, error):
 def home_page(request):
     values = {
         "activeAuctions" : Auction.objects.filter(deadLine__gt = timezone.now()),
-        "inactiveAuctions" : Auction.objects.filter(deadLine__lte = timezone.now())
+        "inactiveAuctions" : Auction.objects.filter(deadLine__lte = timezone.now()),
+        "timezone" : timezone.now(),
+        "datetime" : datetime.now()
     }
     return render(request, "home_page.html", values)
 
@@ -192,13 +196,7 @@ def consignment_action(request):
 	if (not request.method == "POST"):
 		return redirect("consignment_portal")
 	altername = request.POST["altername"]
-	# alterdesc = request.POST["alterdesc"]
-	# alterdeadline = request.POST["alterdeadline"]
-	# converteddeadline = timezone.strptime(alterdeadline, '%Y-%m-%dT%H:%M')
-	# totaltime = (converteddeadline - timezone.now()).total_seconds()
-	# print(totaltime)
-	#print(request.user)
-	#print(newalter.consigner)
+
 
 	newalter = Alter(name=altername, consigner=request.user)
 	newalter.save()
@@ -207,7 +205,7 @@ def consignment_action(request):
 		alterImageBytes = alterImage.read()
 		newAlterImage = Alter_Image(picture = alterImageBytes, alter= newalter)
 		newAlterImage.save()
-	# tasks.decidevictor.apply_async( (newalter.id,), countdown=totaltime )
+
 	return redirect('home_page')
 
 # ----------------------
@@ -273,8 +271,13 @@ def setup_auction_action(request):
         alter=alter,
         startAmount=startAmount,
         minimumIncrement=minimumIncrement,
-        launchTime=launchTime,
-        deadLine=deadLine
+        launchTime=make_aware(datetime.strptime(launchTime, '%Y-%m-%dT%H:%M')),
+        deadLine=make_aware(datetime.strptime(deadLine, '%Y-%m-%dT%H:%M'))
         )
     newAuction.save()
+    converteddeadline = newAuction.deadLine
+    totaltime = (converteddeadline - timezone.now()).total_seconds()
+    print(totaltime)
+    print(request.user)
+    tasks.decidevictor.apply_async( (newAuction.id,), countdown=totaltime )
     return redirect('home_page')

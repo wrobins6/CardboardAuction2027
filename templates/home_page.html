@@ -9,6 +9,16 @@
             <div class="row">
                 <div class="col-sm-4 offset-sm-4 my-4">
                     <h1>Auctions</h1>
+
+                    {% load tz %}
+
+                    {% localtime on %}
+
+                    <p>{{ timezone }}</p>
+                    <p>{{ datetime }}</p>
+
+                    {% endlocaltime %}
+
                     <h4>Ongoing Auctions</h4>
                     {% for auction in activeAuctions %}
                         <a href="/auction/auction_page?aid={{auction.pk}}" class="w3-text-grey">{{ auction.alter.name }}</a>

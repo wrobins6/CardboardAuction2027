@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
+from .models import Auction
 from .models import Alter
 from .models import Bid
 from accounts.models import CustomUser
@@ -18,15 +19,14 @@ def err(the_error):
 	
 @shared_task
 def decidevictor(auction_id):
-
 	# Get Alter that just ended
-	alter_won = Alter.objects.get(id=auction_id)
-	if (alter_won is None):
-		return err("No alters with auction ID")
-	print(str(alter_won.name))
+	auction_won = Auction.objects.get(id=auction_id)
+	if (auction_won is None):
+		return err("No auctions with auction ID")
+	print(str(auction_won.alter.name))
 	
-	# Get list of Bids on that alter
-	bids = Bid.objects.filter(alter=alter_won)
+	# Get list of Bids on that auction
+	bids = Bid.objects.filter(auction=auction_won)
 	if (bids is None):
 		return err("Bids came up as None")
 	print(str(bids))
@@ -44,7 +44,7 @@ def decidevictor(auction_id):
 	print(str(user_victor))
 	
 	# Print info block
-	new_message = "The following auction has ended: " + alter_won.name + " with id of " + str(auction_id)
+	new_message = "The following auction has ended: " + auction_won.alter.name + " with id of " + str(auction_id)
 	print(new_message)
 	victory_message = "The card was sold for " + str(bid_victor.amount) + " to " + user_victor.username
 	print(victory_message)
