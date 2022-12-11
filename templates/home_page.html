@@ -4,32 +4,26 @@
         <title>Auctions</title>
         {% include "header.html" %}
     </head>
-    <body>
+    <body onload="populateLocalTime()">
         <div class="flexcontent">
             <div class="row">
                 <div class="col-sm-4 offset-sm-4 my-4">
                     <h1>Auctions</h1>
 
-                    {% load tz %}
-
-                    {% localtime on %}
-
-                    <p>{{ timezone }}</p>
-                    <p>{{ datetime }}</p>
-
-                    {% endlocaltime %}
+                    <p id="localTime"></p>
+                    <p>Server Time -::- {{ datetime }}</p>
 
                     <h4>Ongoing Auctions</h4>
                     {% for auction in activeAuctions %}
                         <a href="/auction/auction_page?aid={{auction.pk}}" class="w3-text-grey">{{ auction.alter.name }}</a>
-                        <p>{{ auction.deadLine }}</p>
+                        <p class="localTime">{{ auction.deadLine.isoformat }}</p>
                         <br>
                     {% endfor %}
 
                     <h4>Finished Auctions</h4>
                     {% for auction in inactiveAuctions %}
                         <a href="/auction/auction_page?aid={{auction.pk}}" class="w3-text-grey">{{ auction.alter.name }}</a>
-                        <p>{{ auction.deadLine }}</p>
+                        <p class="localTime">{{ auction.deadLine.isoformat }}</p>
                         <br>
                     {% endfor %}
                 </div>
@@ -37,4 +31,22 @@
         </div>
         {% include "footer.html" %}
     </body>
+    <script type="text/javascript">
+        const localDate = new Date( "{{timezone.isoformat}}" );
+        const localDateString  = localDate.toLocaleString();
+        const localDateElem = document.getElementById('localTime');
+        const toConvert = document.getElementsByClassName("localTime")
+        function populateLocalTime()
+        {
+            for (let i = 0; i < toConvert.length; i++)
+            {
+                var utcString = toConvert[i].innerHTML;
+                var localizedDate = new Date(utcString);
+                var localizedDateString = localizedDate.toLocaleString();
+                toConvert[i].innerHTML = localizedDateString;
+            }
+        	var text = document.createTextNode("Local Time -::- " + localDateString);
+        	localDateElem.appendChild( text );
+        }
+    </script>
 </html>

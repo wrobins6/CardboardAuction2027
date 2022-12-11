@@ -4,7 +4,7 @@
         <title>Setup Auction</title>
         {% include "header.html" %}
     </head>
-    <body>
+    <body onload="SetOffset()">
         <div class="flexcontent">
             <div class="row">
                 <div class="col-sm-4 my-4">
@@ -20,6 +20,7 @@
                         <input required class="w3-input w3-border" type="text" name="startAmount" size="20"/>
                         <label class="my-2">Minimum Increment</label>
                         <input required class="w3-input w3-border" type="text" name="minimumIncrement" size="20"/>
+                        <input id="offsetInput" type="hidden" name="timezoneOffset" value="">
                         <!-- [label ] -->
                         <br>
                         <br>
@@ -31,4 +32,11 @@
         </div>
         {% include "footer.html" %}
     </body>
+    <script>
+        const offsetElem = document.getElementById("offsetInput");
+        const offset = new Date().getTimezoneOffset();
+        function SetOffset() {
+            offsetElem.setAttribute("value", offset);
+        }
+    </script>
 </html>

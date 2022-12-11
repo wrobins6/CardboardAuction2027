@@ -8,6 +8,7 @@ from .models import Alter, Auction, Bid, Alter_Image
 from django.utils import timezone
 from django.utils.timezone import make_aware
 from datetime import datetime
+from datetime import timedelta
 from . import tasks
 import os
 import base64
@@ -264,19 +265,24 @@ def setup_auction_action(request):
         deadLine = request.POST['deadLine']
         startAmount = request.POST['startAmount']
         minimumIncrement = request.POST['minimumIncrement']
+        timezoneOffset = request.POST['timezoneOffset']
     except:
         return error_page(request, "Setup missing key values!")
+    tzo = timedelta(minutes=int(timezoneOffset))
+    c_deadLine = make_aware(datetime.strptime(deadLine, '%Y-%m-%dT%H:%M'))
+    c_launchTime = make_aware(datetime.strptime(launchTime, '%Y-%m-%dT%H:%M'))
+    s_deadLine = c_deadLine + tzo
+    s_launchTime = c_launchTime + tzo 
     alter = Alter.objects.get(pk = alterID)
     newAuction = Auction(
         alter=alter,
         startAmount=startAmount,
         minimumIncrement=minimumIncrement,
-        launchTime=make_aware(datetime.strptime(launchTime, '%Y-%m-%dT%H:%M')),
-        deadLine=make_aware(datetime.strptime(deadLine, '%Y-%m-%dT%H:%M'))
+        launchTime=s_launchTime,
+        deadLine=s_deadLine
         )
     newAuction.save()
-    converteddeadline = newAuction.deadLine
-    totaltime = (converteddeadline - timezone.now()).total_seconds()
+    totaltime = (s_deadLine - timezone.now()).total_seconds()
     print(totaltime)
     print(request.user)
     tasks.decidevictor.apply_async( (newAuction.id,), countdown=totaltime )
