@@ -10,8 +10,8 @@
                 <div class="col-sm-4 offset-sm-4 my-4">
                     <h1>Auctions</h1>
 
-                    <p id="localTime"></p>
-                    <p>Server Time -::- {{ datetime }}</p>
+                    <p class="localTime">{{ timezone.isoformat }}</p>
+                    <br>
 
                     <h4>Ongoing Auctions</h4>
                     {% for auction in activeAuctions %}
@@ -32,9 +32,6 @@
         {% include "footer.html" %}
     </body>
     <script type="text/javascript">
-        const localDate = new Date( "{{timezone.isoformat}}" );
-        const localDateString  = localDate.toLocaleString();
-        const localDateElem = document.getElementById('localTime');
         const toConvert = document.getElementsByClassName("localTime")
         function populateLocalTime()
         {
@@ -45,8 +42,6 @@
                 var localizedDateString = localizedDate.toLocaleString();
                 toConvert[i].innerHTML = localizedDateString;
             }
-        	var text = document.createTextNode("Local Time -::- " + localDateString);
-        	localDateElem.appendChild( text );
         }
     </script>
 </html>
